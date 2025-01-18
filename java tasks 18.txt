@@ -1,0 +1,36 @@
+import java.util.PriorityQueue;
+
+class Solution {
+    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    private static final int[] COST = {1, 1, 0, 0}; // Cost to change to right, left, down, up
+
+    public int minCost(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        int[][] cost = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                cost[i][j] = Integer.MAX_VALUE;
+            }
+        }
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[2], b[2]));
+        pq.add(new int[]{0, 0, 0});
+        cost[0][0] = 0;
+
+        while (!pq.isEmpty()) {
+            int[] cell = pq.poll();
+            int x = cell[0], y = cell[1], c = cell[2];
+            if (x == m - 1 && y == n - 1) {
+                return c;
+            }
+            for (int i = 0; i < 4; i++) {
+                int nx = x + DIRECTIONS[i][0], ny = y + DIRECTIONS[i][1];
+                int newCost = c + (grid[x][y] == i + 1 ? 0 : 1);
+                if (nx >= 0 && nx < m && ny >= 0 && ny < n && newCost < cost[nx][ny]) {
+                    cost[nx][ny] = newCost;
+                    pq.add(new int[]{nx, ny, newCost});
+                }
+            }
+        }
+        return -1; // Should not reach here for valid input
+    }
+}
